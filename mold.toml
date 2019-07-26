@@ -1,0 +1,45 @@
+[types.python]
+command = ["python", "?"]
+extensions = ["py"]
+
+[types.sh]
+command = ["sh", "?"]
+extensions = ["sh"]
+
+[recipes.lint]
+help = "Lint using flake8"
+type = "sh"
+
+[recipes.fmt]
+help = "Autoformat using black"
+type = "sh"
+
+[recipes.fmtcheck]
+help = "Lint using black"
+type = "sh"
+
+[recipes.docstubs]
+help = "Generate doc stubs using sphinx-apidoc"
+type = "sh"
+
+[recipes.docs]
+help = "Generate docs using sphinx-build"
+type = "sh"
+
+[recipes.test]
+help = "Run tests using pytest"
+type = "sh"
+
+[recipes.clean]
+help = "Remove build artifacts"
+type = "sh"
+
+[recipes.package]
+help = "Create a package for publishing"
+type = "sh"
+deps = ["clean"]
+
+[recipes.publish]
+help = "Publish Python package to internal PyPI"
+type = "sh"
+deps = ["package"]

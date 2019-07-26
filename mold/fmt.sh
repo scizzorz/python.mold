@@ -1,0 +1,1 @@
+black $BLACK_ARGS $PYDIRS
