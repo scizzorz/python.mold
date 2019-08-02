@@ -1,1 +1,0 @@
-flake8 $FLAKE_ARGS $PYDIRS

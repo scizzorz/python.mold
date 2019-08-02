@@ -1,1 +1,0 @@
-pytest $PYTEST_ARGS

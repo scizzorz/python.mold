@@ -1,0 +1,61 @@
+version: "0.2.0"
+
+includes:
+  - url: "https://github.com/philipdexter/std.mold.git"
+
+recipes:
+  lint:
+    help: "Lint using flake8"
+    type: "sh"
+    script: |
+      $PYRUN flake8 $FLAKE_ARGS $PYDIRS
+
+  fmt:
+    help: "Autoformat using black"
+    type: "sh"
+    script: |
+      $PYRUN black $BLACK_ARGS $PYDIRS
+
+  fmtcheck:
+    help: "Lint using black"
+    type: "sh"
+    script: |
+      $PYRUN black --check $BLACK_ARGS $PYDIRS
+
+  docstubs:
+    help: "Generate doc stubs using sphinx-apidoc"
+    type: "sh"
+    script: |
+      $PYRUN sphinx-apidoc -fM -o ${DOCSDIR:-docs} -a ${PYMOD} $APIDOC_ARGS
+
+  docs:
+    help: "Generate docs using sphinx-build"
+    type: "sh"
+    script: |
+      $PYRUN sphinx-build -b ${DOCSFMT:-html} ${DOCSDIR:-docs} -a ${DOCSOUTPUT:-docs_build}
+
+  test:
+    help: "Run tests using pytest"
+    type: "sh"
+    script: |
+      $PYRUN pytest $PYTEST_ARGS
+
+  clean:
+    help: "Remove build artifacts"
+    type: "sh"
+    script: |
+      $PYRUN rm -rf build/ dist/ *.egg-info/
+
+  package:
+    help: "Create a package for publishing"
+    type: "sh"
+    deps: ["clean"]
+    script: |
+      $PYRUN python setup.py sdist bdist_wheel
+
+  publish:
+    help: "Publish to a package index"
+    type: "sh"
+    deps: ["package"]
+    script: |
+      $PYRUN twine upload --repository-url $PYPI dist/*
