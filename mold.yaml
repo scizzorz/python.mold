@@ -43,8 +43,10 @@ recipes:
   coverage:
     help: "Run tests using pytest and collect coverage data"
     type: "sh"
-    script: |
-         $PYRUN coverage run --source=$PYMOD -m pytest && $PYRUN coverage report && $PYRUN coverage html
+    script: | 
+      $PYRUN coverage run --source=$PYMOD -m pytest
+      $PYRUN coverage report
+      $PYRUN coverage html
   
   clean:
     help: "Remove build artifacts"
