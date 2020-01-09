@@ -8,42 +8,72 @@ recipes:
   lint:
     help: "Lint using flake8"
     runtime: "sh"
+    variables:
+      PYRUN: "Optional prefix to activate an environment, eg: `poetry run`"
+      FLAKE_ARGS: "Additional arguments to pass to flake8"
+      PYDIRS: "Directories containing Python files"
     script: |
       $PYRUN flake8 $FLAKE_ARGS $PYDIRS
 
   fmt:
     help: "Autoformat using black"
     runtime: "sh"
+    variables:
+      PYRUN: "Optional prefix to activate an environment, eg: `poetry run`"
+      BLACK_ARGS: "Additional arguments to pass to black"
+      PYDIRS: "Directories containing Python files"
     script: |
       $PYRUN black $BLACK_ARGS $PYDIRS
 
   fmtcheck:
     help: "Lint using black"
     runtime: "sh"
+    variables:
+      PYRUN: "Optional prefix to activate an environment, eg: `poetry run`"
+      BLACK_ARGS: "Additional arguments to pass to black"
+      PYDIRS: "Directories containing Python files"
     script: |
       $PYRUN black --check $BLACK_ARGS $PYDIRS
 
   docstubs:
     help: "Generate doc stubs using sphinx-apidoc"
     runtime: "sh"
+    variables:
+      PYRUN: "Optional prefix to activate an environment, eg: `poetry run`"
+      APIDOC_ARGS: "Additional arguments to pass to sphinx-apidoc"
+      DOCSDIR: "Directory containing documentation files; default `docs`"
+      PYMOD: "Primary Python module to document"
     script: |
       $PYRUN sphinx-apidoc -fM -o ${DOCSDIR:-docs} -a ${PYMOD} $APIDOC_ARGS
 
   docs:
     help: "Generate docs using sphinx-build"
     runtime: "sh"
+    variables:
+      PYRUN: "Optional prefix to activate an environment, eg: `poetry run`"
+      APIDOC_ARGS: "Additional arguments to pass to sphinx-apidoc"
+      DOCSDIR: "Directory containing documentation files; default `docs`"
+      DOCSOUTPUT: "Directory to output documentation; default `docs_build`"
+      DOCSFMT: "Format to build documentation; default `html`"
+      PYMOD: "Primary Python module to document"
     script: |
       $PYRUN sphinx-build -b ${DOCSFMT:-html} ${DOCSDIR:-docs} -a ${DOCSOUTPUT:-docs_build}
 
   test:
     help: "Run tests using pytest"
     runtime: "sh"
+    variables:
+      PYRUN: "Optional prefix to activate an environment, eg: `poetry run`"
+      PYTEST_ARGS: "Additional arguments to pass to pytest"
     script: |
       $PYRUN pytest $PYTEST_ARGS
 
   coverage:
     help: "Run tests using pytest and collect coverage data"
     runtime: "sh"
+    variables:
+      PYRUN: "Optional prefix to activate an environment, eg: `poetry run`"
+      PYMOD: "Primary Python module to document"
     script: |
       $PYRUN coverage run --source=$PYMOD -m pytest
       $PYRUN coverage report
@@ -52,6 +82,8 @@ recipes:
   clean:
     help: "Remove build artifacts"
     runtime: "sh"
+    variables:
+      PYRUN: "Optional prefix to activate an environment, eg: `poetry run`"
     script: |
       $PYRUN rm -rf build/ dist/ *.egg-info/
 
@@ -59,6 +91,8 @@ recipes:
     help: "Create a package for publishing"
     runtime: "sh"
     deps: ["clean"]
+    variables:
+      PYRUN: "Optional prefix to activate an environment, eg: `poetry run`"
     script: |
       $PYRUN python setup.py sdist bdist_wheel
 
@@ -66,5 +100,8 @@ recipes:
     help: "Publish to a package index"
     runtime: "sh"
     deps: ["package"]
+    variables:
+      PYRUN: "Optional prefix to activate an environment, eg: `poetry run`"
+      PYPI: "PyPI repository URL"
     script: |
       $PYRUN twine upload --repository-url $PYPI dist/*
