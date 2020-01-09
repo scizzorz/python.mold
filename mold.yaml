@@ -1,69 +1,70 @@
-version: "0.3.0"
+version: "0.5"
 
 includes:
   - url: "https://github.com/xtfc/std.mold"
+    ref: "0.5"
 
 recipes:
   lint:
     help: "Lint using flake8"
-    type: "sh"
+    runtime: "sh"
     script: |
       $PYRUN flake8 $FLAKE_ARGS $PYDIRS
 
   fmt:
     help: "Autoformat using black"
-    type: "sh"
+    runtime: "sh"
     script: |
       $PYRUN black $BLACK_ARGS $PYDIRS
 
   fmtcheck:
     help: "Lint using black"
-    type: "sh"
+    runtime: "sh"
     script: |
       $PYRUN black --check $BLACK_ARGS $PYDIRS
 
   docstubs:
     help: "Generate doc stubs using sphinx-apidoc"
-    type: "sh"
+    runtime: "sh"
     script: |
       $PYRUN sphinx-apidoc -fM -o ${DOCSDIR:-docs} -a ${PYMOD} $APIDOC_ARGS
 
   docs:
     help: "Generate docs using sphinx-build"
-    type: "sh"
+    runtime: "sh"
     script: |
       $PYRUN sphinx-build -b ${DOCSFMT:-html} ${DOCSDIR:-docs} -a ${DOCSOUTPUT:-docs_build}
 
   test:
     help: "Run tests using pytest"
-    type: "sh"
+    runtime: "sh"
     script: |
       $PYRUN pytest $PYTEST_ARGS
 
   coverage:
     help: "Run tests using pytest and collect coverage data"
-    type: "sh"
-    script: | 
+    runtime: "sh"
+    script: |
       $PYRUN coverage run --source=$PYMOD -m pytest
       $PYRUN coverage report
       $PYRUN coverage html
-  
+
   clean:
     help: "Remove build artifacts"
-    type: "sh"
+    runtime: "sh"
     script: |
       $PYRUN rm -rf build/ dist/ *.egg-info/
 
   package:
     help: "Create a package for publishing"
-    type: "sh"
+    runtime: "sh"
     deps: ["clean"]
     script: |
       $PYRUN python setup.py sdist bdist_wheel
 
   publish:
     help: "Publish to a package index"
-    type: "sh"
+    runtime: "sh"
     deps: ["package"]
     script: |
       $PYRUN twine upload --repository-url $PYPI dist/*
