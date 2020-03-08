@@ -1,0 +1,48 @@
+version "0.6"
+
+recipe lint {
+  help "Lint using flake8"
+  $ "$PYRUN flake8 $FLAKE_ARGS $PYDIRS"
+}
+
+recipe fmt {
+  help "Autoformat using black"
+  $ "$PYRUN black $BLACK_ARGS $PYDIRS"
+}
+
+recipe fmtcheck {
+  help "Lint using black"
+  $ "$PYRUN black --check $BLACK_ARGS $PYDIRS"
+}
+
+recipe docstubs {
+  help "Generate doc stubs using sphinx-apidoc"
+  $ "$PYRUN sphinx-apidoc -fM -o docs -a $PYMOD $APIDOC_ARGS"
+}
+
+recipe docs {
+  help "Generate docs using sphinx-build"
+  $ "$PYRUN sphinx-build -b html docs -a docs_build"
+}
+
+recipe test {
+  help "Run tests using pytest"
+  $ "$PYRUN pytest $PYTEST_ARGS"
+}
+
+recipe clean {
+  help "Remove build artifacts"
+  $ "$PYRUN rm -rf build/ dist/ *.egg-info/"
+}
+
+recipe package {
+  help "Create a package for publishing"
+  require clean
+  $ "$PYRUN python setup.py sdist bdist_wheel"
+}
+
+recipe publish {
+  help "Publish to a package index"
+  require package
+  $ "$PYRUN twine upload --repository-url $PYPI dist/*"
+}
